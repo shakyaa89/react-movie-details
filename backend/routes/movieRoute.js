@@ -5,15 +5,24 @@ const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
 
 router.get("/", async (req, res) => {
   const page = req.query.page || 1;
+  const search = req.query.search || "";
 
   try {
-    const movie_data = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${MOVIE_API_KEY}&page=${page}`
-    );
-    const movie_data_json = await movie_data.json();
-    return res.status(200).json({ movie_data: movie_data_json });
+    let url;
+    if (search.trim()) {
+      url = `https://api.themoviedb.org/3/search/movie?api_key=${MOVIE_API_KEY}&query=${encodeURIComponent(
+        search
+      )}&page=${page}`;
+    } else {
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${MOVIE_API_KEY}&page=${page}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return res.status(200).json({ movie_data: data });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Failed to fetch movies" });
   }
 });

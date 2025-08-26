@@ -17,15 +17,17 @@ function Movies() {
   const [loading, setLoading] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // Term to trigger fetch
 
-  const fetchMovies = async (pageNumber = 1) => {
+  const fetchMovies = async (pageNumber = 1, query = "") => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3001/movie?page=${pageNumber}`
+        `http://localhost:3001/movie?page=${pageNumber}&search=${query.trim()}`
       );
-      setMovies(response?.data?.movie_data?.results);
-      setTotalPage(response?.data?.movie_data?.total_pages);
+      setMovies(response?.data?.movie_data?.results || []);
+      setTotalPage(response?.data?.movie_data?.total_pages || 1);
     } catch (error) {
       console.log(error);
     } finally {
@@ -33,9 +35,10 @@ function Movies() {
     }
   };
 
+  // Fetch on page or search term change
   useEffect(() => {
-    fetchMovies(page);
-  }, [page]);
+    fetchMovies(page, searchTerm);
+  }, [page, searchTerm]);
 
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
@@ -52,7 +55,6 @@ function Movies() {
   const MovieCard = ({ movie }: { movie: Movie }) => (
     <Link to={`/movie/${movie.id}`} className="group block">
       <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-b from-gray-900 to-black transition-all duration-300 hover:scale-105 shadow-lg sm:shadow-2xl hover:shadow-2xl sm:hover:shadow-3xl border border-gray-700 hover:border-gray-500">
-        {/* Movie Poster */}
         <div className="aspect-[2/3] overflow-hidden relative">
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -63,8 +65,6 @@ function Movies() {
               e.currentTarget.src = "/api/placeholder/300/450";
             }}
           />
-
-          {/* Rating Badge */}
           {movie.vote_average && (
             <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center gap-1 bg-black bg-opacity-70 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full backdrop-blur-sm">
               <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-500 fill-current" />
@@ -73,8 +73,6 @@ function Movies() {
               </span>
             </div>
           )}
-
-          {/* Overlay on hover - Hidden on mobile for performance */}
           <div className="hidden sm:block absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-4 left-4 right-4">
               <p className="text-white text-sm line-clamp-4 leading-relaxed font-light">
@@ -83,13 +81,10 @@ function Movies() {
             </div>
           </div>
         </div>
-
-        {/* Movie Info */}
         <div className="p-2 sm:p-4 space-y-2 sm:space-y-3">
           <h3 className="text-white font-bold text-sm sm:text-lg leading-tight line-clamp-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
             {movie.title}
           </h3>
-
           <div className="flex items-center gap-1 sm:gap-2 text-gray-400">
             <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />
             <span className="text-xs sm:text-sm font-medium">
@@ -105,21 +100,16 @@ function Movies() {
 
   const Pagination = () => {
     const getVisiblePages = () => {
-      const delta = window.innerWidth < 640 ? 1 : 2; // Show fewer pages on mobile
+      const delta = window.innerWidth < 640 ? 1 : 2;
       const range = [];
       const start = Math.max(1, page - delta);
       const end = Math.min(totalPage, page + delta);
-
-      for (let i = start; i <= end; i++) {
-        range.push(i);
-      }
-
+      for (let i = start; i <= end; i++) range.push(i);
       return range;
     };
 
     return (
       <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-3 mt-8 sm:mt-12 md:mt-16">
-        {/* Hide First/Last buttons on mobile */}
         <button
           disabled={page === 1}
           onClick={() => setPage(1)}
@@ -127,7 +117,6 @@ function Movies() {
         >
           First
         </button>
-
         <button
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
@@ -136,7 +125,6 @@ function Movies() {
           <span className="hidden sm:inline">Previous</span>
           <span className="sm:hidden">Prev</span>
         </button>
-
         <div className="flex gap-1 sm:gap-2">
           {getVisiblePages().map((pageNum) => (
             <button
@@ -152,7 +140,6 @@ function Movies() {
             </button>
           ))}
         </div>
-
         <button
           disabled={page === totalPage}
           onClick={() => setPage(page + 1)}
@@ -161,8 +148,6 @@ function Movies() {
           <span className="hidden sm:inline">Next</span>
           <span className="sm:hidden">Next</span>
         </button>
-
-        {/* Hide First/Last buttons on mobile */}
         <button
           disabled={page === totalPage}
           onClick={() => setPage(totalPage)}
@@ -176,19 +161,40 @@ function Movies() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Search Input */}
+      <div
+        className={`flex justify-center p-6 gap-2 ${
+          searchQuery ? "bg-gradient-to-t from-gray-900 to-black" : ""
+        }`}
+      >
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setPage(1);
+            setSearchTerm(e.target.value);
+          }}
+          placeholder="Search movies..."
+          className="w-full sm:w-1/2 px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600"
+        />
+      </div>
+
       {/* Hero Header */}
-      <div className="relative bg-gradient-to-b from-black to-gray-900 pt-20 sm:pt-24 pb-4 sm:pb-6 md:pb-8">
-        <div className="container mx-auto px-4 sm:px-6 md:px-12 max-w-7xl">
-          <div className="text-center space-y-3 sm:space-y-4 md:space-y-6">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Popular Movies
-            </h1>
-            <p className="text-gray-400 text-sm sm:text-lg md:text-xl font-light max-w-2xl mx-auto px-4">
-              Discover the latest and greatest films from around the world
-            </p>
+      {!searchTerm && (
+        <div className="relative bg-gradient-to-b from-black to-gray-900 pt-10 sm:pt-10 pb-4 sm:pb-6 md:pb-8">
+          <div className="container mx-auto px-4 sm:px-6 md:px-12 max-w-7xl">
+            <div className="text-center space-y-3 sm:space-y-4 md:space-y-6">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Popular Movies
+              </h1>
+              <p className="text-gray-400 text-sm sm:text-lg md:text-xl font-light max-w-2xl mx-auto px-4">
+                Discover the latest and greatest films from around the world
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div className="bg-gradient-to-b from-gray-900 to-black pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-12 md:pb-16">
@@ -211,7 +217,7 @@ function Movies() {
                 No movies found
               </h2>
               <p className="text-gray-500 text-base sm:text-lg">
-                Try refreshing the page or check your connection
+                Try changing your search or check your connection
               </p>
             </div>
           )}
