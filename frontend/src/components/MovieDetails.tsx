@@ -24,6 +24,9 @@ function MovieDetails() {
   const [movieDetails, setMovieDetails] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [trailerKey, setTrailerKey] = useState("");
+  const [trailerError, setTrailerError] = useState(false);
+  const [showTrailer, setShowTrailer] = useState(false);
 
   const fetchMovies = async () => {
     try {
@@ -39,8 +42,29 @@ function MovieDetails() {
     }
   };
 
+  const fetchTrailer = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/movie/trailer/${movie_id}`
+      );
+      setTrailerKey(response?.data?.trailer?.key);
+      console.log(trailerKey);
+    } catch (error: any) {
+      if (error.status === 404) {
+        setTrailerError(true);
+        return;
+      }
+    }
+  };
+
+  const handleTrailer = () => {
+    fetchTrailer();
+    setShowTrailer(true);
+  };
+
   useEffect(() => {
     fetchMovies();
+
     console.log(movieDetails);
   }, [movie_id]);
 
@@ -175,10 +199,50 @@ function MovieDetails() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center lg:justify-start">
-                  <button className="flex items-center justify-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <button
+                    onClick={() => handleTrailer()}
+                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  >
                     <Play className="w-6 h-6 fill-current" />
                     Watch Trailer
                   </button>
+                  {showTrailer && trailerKey && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                      <div className="relative w-full max-w-4xl">
+                        <iframe
+                          className="w-full aspect-video rounded-xl"
+                          src={`https://www.youtube.com/embed/${trailerKey}`}
+                          title="Movie Trailer"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                        <button
+                          onClick={() => setShowTrailer(false)}
+                          className="absolute -top-10 right-0 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {trailerError && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                      <div className="relative w-full max-w-md bg-black rounded-xl p-6 text-center">
+                        <h1 className="text-xl font-bold text-white mb-4">
+                          Trailer Not Found
+                        </h1>
+                        <p className="text-gray-300 mb-4">
+                          Sorry, we couldn't find a trailer for this movie.
+                        </p>
+                        <button
+                          onClick={() => setTrailerError(false)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <button
                     onClick={() => setIsWishlisted(!isWishlisted)}
