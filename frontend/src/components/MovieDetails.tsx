@@ -68,6 +68,7 @@ function MovieDetails() {
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     fetchMovieDetails();
   }, [movie_id, media_type]);
 
