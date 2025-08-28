@@ -18,6 +18,7 @@ interface Movie {
   release_date?: string;
   first_air_date?: string;
   runtime?: number;
+  episode_run_time?: number[];
   vote_average?: number;
   genres?: Genre[];
   media_type?: "movie" | "tv";
@@ -40,6 +41,7 @@ function MovieDetails() {
   const getTitle = (item: Movie) => item.title ?? item.name ?? "Untitled";
   const getDate = (item: Movie) =>
     item.release_date ?? item.first_air_date ?? "Unknown date";
+  const getRuntime = (item: Movie) => item.runtime ?? item.episode_run_time;
 
   const fetchMovieDetails = async () => {
     try {
@@ -48,6 +50,7 @@ function MovieDetails() {
         `https://react-movie-details.onrender.com/movie/details/${media_type}/${movie_id}`
       );
       setMovieDetails(response.data.movie_data);
+      console.log(response.data.movie_data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -146,7 +149,12 @@ function MovieDetails() {
               </div>
               <div className="flex items-center gap-2 bg-black bg-opacity-50 px-4 py-2 rounded-full">
                 <Clock className="w-5 h-5 text-green-400" />
-                <span className="font-medium">123 mins</span>
+                <span className="font-medium">
+                  {movieDetails.runtime === null ||
+                  movieDetails?.episode_run_time?.length === 0
+                    ? "N/A"
+                    : getRuntime(movieDetails) + " min"}
+                </span>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
