@@ -74,8 +74,8 @@ function Navbar() {
 
         {/* Mobile Menu Overlay */}
         {isMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-16 sm:top-20 bg-black/95 backdrop-blur-md z-40">
-            <div className="container mx-auto px-4 sm:px-6 py-6">
+          <div className="lg:hidden fixed inset-0 top-16 sm:top-20 backdrop-blur-md z-40">
+            <div className="container mx-auto px-4 sm:px-6 py-6 bg-black/90 rounded-b-2xl backdrop-blur-md">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider px-3">
