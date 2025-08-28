@@ -64,7 +64,7 @@ async function fetchMovieTrailers(req, res) {
 
     const videoData = await response.json();
 
-    const trailers = videoData.results.filter(
+    const trailers = (videoData.results || []).filter(
       (video) =>
         video.type === "Trailer" &&
         video.site === "YouTube" &&

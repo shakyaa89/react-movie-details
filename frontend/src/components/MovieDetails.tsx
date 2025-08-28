@@ -46,7 +46,7 @@ function MovieDetails() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3001/movie/details/${media_type}/${movie_id}`
+        `https://react-movie-details.onrender.com/movie/details/${media_type}/${movie_id}`
       );
       setMovieDetails(response.data.movie_data);
     } catch (error) {
@@ -59,7 +59,7 @@ function MovieDetails() {
   const fetchTrailer = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/movie/trailer/${media_type}/${movie_id}`
+        `https://react-movie-details.onrender.com/movie/trailer/${media_type}/${movie_id}`
       );
       setTrailerKey(response.data.trailer?.key);
       setShowTrailer(true);

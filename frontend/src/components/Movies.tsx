@@ -29,7 +29,7 @@ function Movies() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3001/movie/all?page=${pageNumber}&search=${query.trim()}`
+        `https://react-movie-details.onrender.com/movie/all?page=${pageNumber}&search=${query.trim()}`
       );
       const results = response?.data?.movie_data?.results || [];
       const filteredResults = results.filter(
