@@ -46,6 +46,7 @@ function Movies() {
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     fetchMovies(page, searchTerm);
   }, [page, searchTerm]);
 
