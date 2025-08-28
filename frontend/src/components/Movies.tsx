@@ -155,7 +155,7 @@ function Movies() {
             <button
               key={pageNum}
               onClick={() => setPage(pageNum)}
-              className={`px-2 sm:px-3 md:px-4 py-2 md:py-3 text-xs sm:text-sm font-bold rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+              className={`px-4 sm:px-4 md:px-4 py-2 md:py-3 text-xs sm:text-sm font-bold rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
                 page === pageNum
                   ? "bg-gradient-to-r from-red-600 to-red-700 text-white"
                   : "text-gray-300 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 border border-gray-600 hover:border-gray-400"
@@ -237,9 +237,9 @@ function Movies() {
               <Pagination />
             </>
           ) : (
-            <div className="text-center py-12 sm:py-16 md:py-20 px-4">
-              <div className="text-4xl sm:text-6xl mb-4 sm:mb-6">🎬</div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-300 mb-2 sm:mb-4">
+            <div className="text-center pt-12 sm:pt-16 md:pt-20 px-4">
+              <div className="text-4xl sm:text-6xl mt-4 sm:mt-6">🎬</div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-300 mt-2 sm:mt-4">
                 No movies or TV shows found
               </h2>
               <p className="text-gray-500 text-base sm:text-lg">
@@ -248,6 +248,12 @@ function Movies() {
             </div>
           )}
         </div>
+      </div>
+      <div className="bg-black text-center pb-6">
+        <p className="text-gray-500 text-sm">
+          Created by{" "}
+          <span className="text-white font-semibold">Shashwat Shakya</span>
+        </p>
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ function HomePage() {
       </div>
 
       {/* Popular Movies Section */}
-      <div className="bg-gradient-to-b from-gray-900 to-black py-10 sm:py-14 md:py-20">
+      <div className="bg-gradient-to-b from-gray-900 to-black pt-10 sm:pt-14 md:pt-20 pb-8 sm:pb-8 md:pb-10">
         <div className="container mx-auto px-4 sm:px-6 md:px-12 max-w-5xl">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">
             Popular Movies
@@ -49,6 +49,12 @@ function HomePage() {
             </p>
           </Link>
         </div>
+      </div>
+      <div className="bg-black text-center pb-6">
+        <p className="text-gray-500 text-sm">
+          Created by{" "}
+          <span className="text-white font-semibold">Shashwat Shakya</span>
+        </p>
       </div>
     </div>
   );

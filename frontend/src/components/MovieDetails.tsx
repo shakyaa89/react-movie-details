@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Calendar, Clock, Heart, Play, Star } from "lucide-react";
+import { Calendar, Clock, Play, Star } from "lucide-react";
 
 interface Genre {
   id: number;
@@ -30,7 +30,6 @@ function MovieDetails() {
   }>();
   const [movieDetails, setMovieDetails] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [trailerKey, setTrailerKey] = useState("");
   const [trailerError, setTrailerError] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
@@ -73,7 +72,7 @@ function MovieDetails() {
   }, [movie_id, media_type]);
 
   const SkeletonLoader = () => (
-    <div className="min-h-screen flex flex-col lg:flex-row gap-12 items-start pt-20 px-6 md:px-12 max-w-7xl mx-auto animate-pulse">
+    <div className="min-h-screen flex flex-col lg:flex-row items-center lg:items-start gap-12 pt-20 px-6 md:px-12 max-w-7xl mx-auto animate-pulse">
       <div className="w-72 md:w-80 lg:w-96 h-[500px] bg-[#222] rounded-2xl" />
       <div className="flex-1 space-y-6">
         <div className="h-12 bg-[#222] rounded w-3/4"></div>
@@ -111,7 +110,7 @@ function MovieDetails() {
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-        <div className="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl flex flex-col lg:flex-row gap-12 items-start pt-20">
+        <div className="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl flex flex-col items-center lg:flex-row lg:items-start gap-12 pt-20">
           <img
             src={
               movieDetails.poster_path
@@ -205,19 +204,6 @@ function MovieDetails() {
                   </div>
                 </div>
               )}
-              <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${
-                  isWishlisted
-                    ? "bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-700 hover:to-red-700"
-                    : "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 border border-gray-600 hover:border-gray-400"
-                }`}
-              >
-                <Heart
-                  className={`w-6 h-6 ${isWishlisted ? "fill-current" : ""}`}
-                />{" "}
-                {isWishlisted ? "In Watchlist" : "Add to Watchlist"}
-              </button>
             </div>
             <div className="pt-4">
               <p className="text-gray-400 text-lg">
@@ -230,14 +216,18 @@ function MovieDetails() {
           </div>
         </div>
       </div>
-      <div className="bg-gradient-to-b from-black to-gray-900 py-20">
+      <div className="bg-gradient-to-b from-black to-gray-900 pt-20 pb-10">
         <div className="container mx-auto px-6 md:px-12 max-w-7xl text-center">
           <h2 className="text-3xl font-bold text-gray-300 mb-4">
             More Details Coming Soon
           </h2>
-          <p className="text-gray-500">
+          <p className="text-gray-500 pb-10">
             Cast information, reviews, and similar movies will be displayed
             here.
+          </p>
+          <p className="text-gray-500 text-sm">
+            Created by{" "}
+            <span className="text-white font-semibold">Shashwat Shakya</span>
           </p>
         </div>
       </div>
